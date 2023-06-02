@@ -321,7 +321,7 @@ function Start(){
     ctx.font = "20px 'Aadhunik', Arial";
     ctx.fillText("Controls: WASD or Cursor Keys to Move Ship. ", canvasWidth / 2 - 200, canvasWidth / 2 - 200);
     ctx.fillText("Press Spacebar to Shoot Bullets at Asteroids. ", canvasWidth / 2 - 200, canvasWidth / 2 - 170);
-    ctx.fillText("Score R to Restart the Game Window. ", canvasWidth / 2 - 200, canvasWidth / 2 - 140);
+    ctx.fillText("Press R to Restart the Game Window. ", canvasWidth / 2 - 200, canvasWidth / 2 - 140);
     ctx.fillText("~ ~ ~ Hit the ENTER key to Start. ~ ~ ~", canvasWidth / 2 - 160, canvasWidth / 2 - 90);
 
 
