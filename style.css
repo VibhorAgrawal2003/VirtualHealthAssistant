@@ -4,7 +4,10 @@ body{
 
 #container {
     max-width: 1400xp;
-    margin: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);    
 }
 
 #my-canvas {
@@ -12,3 +15,9 @@ body{
     border: 1px solid #ffffff;
     margin: auto;
 }
+
+@font-face { 
+    font-family: "Aadhunik"; 
+    src: url("./fonts/Aadhunik.ttf");
+    format: "truetype";
+ }
