@@ -10,4 +10,5 @@ body{
 #my-canvas {
     background: #000000;
     border: 1px solid #ffffff;
+    margin: auto;
 }
