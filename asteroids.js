@@ -1,7 +1,8 @@
 let canvas;
 let ctx;
-let canvasWidth = 1400;
-let canvasHeight = 1000;
+let canvasWidth = 700;
+let canvasHeight = 500;
+let scale = 0.5;
 let keys = [];
 let ship;
 let bullets = [];
@@ -22,7 +23,7 @@ function SetupCanvas(){
 
     ship = new Ship();
 
-    for(let i=0; i<10; i++){
+    for(let i=0; i<5; i++){
         asteroids.push(new Asteroid());
     }
 
@@ -37,7 +38,6 @@ function SetupCanvas(){
             bullets.push(new Bullet(ship.angle));
         }
     });
-
     Render();
 
 }
@@ -49,15 +49,17 @@ class Ship {
         this.x = canvasWidth / 2;
         this.y = canvasHeight / 2;
         this.movingForward = false;
-        this.speed = 0.1;
+        this.movingBackward = false;
+        this.gear = 1;
+        this.speed = 0.1*scale;
         this.velX = 0;
         this.velY = 0;
         this.rotateSpeed = 0.001;
-        this.radius = 25;
+        this.radius = 25 * scale;
         this.angle = -90;
         this.strokeColor = '#39ff0d';
         this.fillColor = '#39ff0d';
-        this.tipX = canvasWidth / 2 + 15;
+        this.tipX = canvasWidth / 2 + 15*scale;
         this.tipY = canvasHeight / 2;
     }
 
@@ -77,11 +79,10 @@ class Ship {
     Update(){
         let radians = this.angle/Math.PI * 180;
 
-        if(this.movingForward){
+        if(this.movingForward || this.movingBackward){
             this.velX += Math.cos(radians) * this.speed;
             this.velY += Math.sin(radians) * this.speed;
         }
-
 
         if(this.x < this.radius){
             this.x = canvas.width;
@@ -102,8 +103,38 @@ class Ship {
         this.velX *= 0.99;
         this.velY *= 0.99;
 
-        this.x -= this.velX;
-        this.y -= this.velY;
+
+
+        if(ship.movingBackward){
+            if(this.gear != 0){
+                this.gear = 0;
+                this.velX = 0;
+                this.velY = 0;
+            }
+            this.x += this.velX;
+            this.y += this.velY;
+        }
+
+        else if(ship.movingForward){
+            if(this.gear != 1){
+                this.gear = 1;
+                this.velX = 0;
+                this.velY = 0;
+            }    
+            this.x -= this.velX;
+            this.y -= this.velY;
+        }
+
+        else{
+            if(this.gear == 1){
+                this.x -= this.velX;
+                this.y -= this.velY;  
+            }
+            else{
+                this.x += this.velX;
+                this.y += this.velY;
+            }       
+        }
     }
 
 Draw() {
@@ -142,10 +173,8 @@ Draw() {
         );
     }
 
-
     ctx.closePath();
     ctx.stroke();
-    // ctx.fill();
 }
 
 }
@@ -157,9 +186,9 @@ class Bullet{
         this.x = ship.tipX;
         this.y = ship.tipY;
         this.angle = angle;
-        this.height = 4;
-        this.width = 4;
-        this.speed = 5;
+        this.height = 4*scale;
+        this.width = 4*scale;
+        this.speed = 4;
         this.velX = 0;
         this.velY = 0;
     }
@@ -185,26 +214,20 @@ class Asteroid{
         this.level = level || 1;
         this.shipX = ship.getShipX();
         this.shipY = ship.getShipY();
-        this.fieldRadius = 100;
-        // this.x = x || Math.floor(Math.random() * (canvasWidth/2 - 30)) ||  (canvasWidth - 30 + Math.floor(Math.random() * (canvasWidth/2 - 30)));
-        // this.y = y || Math.floor(Math.random() * (canvasHeight/2 - 30)) || (canvasHeight - 30 + Math.floor(Math.random() * (canvasHeight/2 - 30)));
-        // this.x=x||Math.random()*canvasWidth;;
-        // this.y=y|| Math.random()*canvasHeight;
+        this.fieldRadius = 100*scale;
 
         this.x = x || ((Math.random() < 0.5)? Math.floor(Math.random() * (this.shipX - this.fieldRadius)) : Math.floor(Math.random() * (canvasWidth - this.shipX - this.fieldRadius)));
         this.y = y || ((Math.random() < 0.5)? Math.floor(Math.random() * (this.shipY - this.fieldRadius)) : Math.floor(Math.random() * (canvasHeight - this.shipY - this.fieldRadius)));
 
-        this.speed = 1 + 0.5 * Math.floor(Math.random() * 3);
+        this.speed = (1 + 0.5 * Math.floor(Math.random() * 3))*scale;
         this.rotateSpeed = 0.0001;
         this.angle = Math.floor(Math.random() * 359);        
         this.spin = Math.floor(Math.random() * 3) - 1;
-        this.offset = Math.floor(Math.random() * 30);
+        this.offset = Math.floor(Math.random() * 30) * scale;
         this.radius = radius || (50 + this.offset);
-        this.collisionRadius = collisionRadius || (this.radius - 4);
+        this.collisionRadius = collisionRadius || (this.radius - 4*scale);
         this.strokeColor = 'white';
-
-
-
+        
     }
 
     Rotate(dir){
@@ -267,10 +290,11 @@ function CircleCollision(x1, y1, r1, x2, y2, r2){
 }
 
 function DrawLives(){
-    let startX = 1350;
-    let startY = 10;
-    let points = [[9,9], [-9,9]];
+    let startX = Math.floor(canvasWidth - canvasWidth/17.5);
+    let startY = 25;
+    let points = [[9,12], [-9,12]];
     ctx.strokeStyle = 'red';
+    ctx.fillStyle = 'red';
     for(let i = 0; i < lives; i++){
         ctx.beginPath();
         ctx.moveTo(startX, startY);
@@ -282,6 +306,7 @@ function DrawLives(){
         }
         ctx.closePath();
         ctx.stroke();
+        ctx.fill();
         startX -= 30;
     }
 }
@@ -292,6 +317,7 @@ function Render(){
     // Keyboard Controls Here
 
     ship.movingForward = (keys[87] || keys[38]); // 'W' key and 'Up' cursor
+    ship.movingBackward = (keys[83] || keys[40]); // 'S' key and 'Down' cursor
 
     if(keys[68] || keys[39]){ // 'D' key and 'Right' cursor
         ship.Rotate(1);
@@ -310,14 +336,15 @@ function Render(){
     ctx.fillStyle = 'white';
     ctx.font = '21px Arial';
     ctx.fillText('SCORE: ' + score.toString(), 20, 35);
-    ctx.fillText('LIVES: ' + lives.toString(), 20, 75);
+    ctx.fillText('LIVES: ', canvasWidth-200, 35);
     if(lives <= 0){
         ship.visible = false;
         ctx.fillStyle = 'white';
         ctx.font = '50px Arial';
         ctx.fillText('GAME OVER ', canvasWidth / 2 - 150, canvasWidth / 2 - 150);
         ctx.fillText('SCORE: ' + score.toString(), canvasWidth / 2 - 150, canvasWidth / 2 - 75); 
-        gameover = true;       
+        gameover = true;  
+        musicToggle = false;     
     }
 
     DrawLives();
@@ -327,7 +354,7 @@ function Render(){
         for(let k=0; k<asteroids.length; k++){
             if(!gameover && CircleCollision(ship.x, ship.y, ship.radius - 4,
             asteroids[k].x, asteroids[k].y, asteroids[k].collisionRadius)){
-
+                
                 ship.x = canvasWidth / 2;
                 ship.y = canvasHeight / 2;
                 ship.velX = 0;
@@ -421,7 +448,7 @@ function Render(){
             }
         }
 
-        if(count < 5){
+        if(count < Math.floor(3 + score / 1000)){
             asteroids.push(new Asteroid());
         }
 
@@ -431,6 +458,5 @@ function Render(){
             asteroids[j].Draw(j);
         }
     }
-
     requestAnimationFrame(Render);
 }
