@@ -1,6 +1,6 @@
 let canvas;
 let ctx;
-let canvasWidth = 700;
+let canvasWidth = 900;
 let canvasHeight = 500;
 let scale = 0.5;
 let keys = [];
@@ -25,8 +25,7 @@ function SetupCanvas(){
 
     for(let i=0; i<5; i++){
         asteroids.push(new Asteroid());
-    }
-
+    }  
 
     document.body.addEventListener("keydown", function(e){
         keys[e.keyCode] = true;
@@ -38,8 +37,8 @@ function SetupCanvas(){
             bullets.push(new Bullet(ship.angle));
         }
     });
-    Render();
 
+    Start();
 }
 
 
@@ -102,8 +101,6 @@ class Ship {
 
         this.velX *= 0.99;
         this.velY *= 0.99;
-
-
 
         if(ship.movingBackward){
             if(this.gear != 0){
@@ -173,6 +170,7 @@ Draw() {
         );
     }
 
+
     ctx.closePath();
     ctx.stroke();
 }
@@ -227,7 +225,9 @@ class Asteroid{
         this.radius = radius || (50 + this.offset);
         this.collisionRadius = collisionRadius || (this.radius - 4*scale);
         this.strokeColor = 'white';
-        
+
+
+
     }
 
     Rotate(dir){
@@ -290,7 +290,7 @@ function CircleCollision(x1, y1, r1, x2, y2, r2){
 }
 
 function DrawLives(){
-    let startX = Math.floor(canvasWidth - canvasWidth/17.5);
+    let startX = Math.floor(canvasWidth - canvasWidth/9);
     let startY = 25;
     let points = [[9,12], [-9,12]];
     ctx.strokeStyle = 'red';
@@ -307,10 +307,40 @@ function DrawLives(){
         ctx.closePath();
         ctx.stroke();
         ctx.fill();
-        startX -= 30;
+        startX += 30;
     }
 }
 
+
+function Start(){
+    ctx.clearRect(0,0,canvasWidth, canvasHeight);
+    ctx.fillStyle = 'white';
+    ctx.font = "50px 'Aadhunik', Arial";
+    ctx.fillText('ASTEROIDS ', canvasWidth / 2 - 120, canvasWidth / 2 - 250);
+
+    ctx.font = "20px 'Aadhunik', Arial";
+    ctx.fillText("Controls: WASD or Cursor Keys to Move Ship. ", canvasWidth / 2 - 200, canvasWidth / 2 - 200);
+    ctx.fillText("Press Spacebar to Shoot Bullets at Asteroids. ", canvasWidth / 2 - 200, canvasWidth / 2 - 170);
+    ctx.fillText("Score R to Restart the Game Window. ", canvasWidth / 2 - 200, canvasWidth / 2 - 140);
+    ctx.fillText("~ ~ ~ Hit the ENTER key to Start. ~ ~ ~", canvasWidth / 2 - 160, canvasWidth / 2 - 90);
+
+
+    if(asteroids.length != 0){
+        for(let j=0; j<asteroids.length; j++){
+            asteroids[j].Update();
+            asteroids[j].Rotate(asteroids[j].spin);
+            asteroids[j].Draw(j);
+        }
+    }
+
+    if(keys[13]){ // 'ENTER' key
+        Render();
+    }
+    else{
+        requestAnimationFrame(Start); 
+    }
+   
+}
 
 function Render(){
 
@@ -331,20 +361,23 @@ function Render(){
         location.reload();
     }
 
-
+    // Canvas Reset
     ctx.clearRect(0,0,canvasWidth, canvasHeight);
     ctx.fillStyle = 'white';
     ctx.font = '21px Arial';
-    ctx.fillText('SCORE: ' + score.toString(), 20, 35);
-    ctx.fillText('LIVES: ', canvasWidth-200, 35);
+    if(!gameover && lives > 0){
+        ctx.fillText('SCORE: ' + score.toString(), 20, 35);
+        ctx.fillText('LIVES: ', canvasWidth-200, 35);
+    }
     if(lives <= 0){
         ship.visible = false;
         ctx.fillStyle = 'white';
-        ctx.font = '50px Arial';
-        ctx.fillText('GAME OVER ', canvasWidth / 2 - 150, canvasWidth / 2 - 150);
-        ctx.fillText('SCORE: ' + score.toString(), canvasWidth / 2 - 150, canvasWidth / 2 - 75); 
-        gameover = true;  
-        musicToggle = false;     
+        ctx.font = "50px 'Aadhunik', Arial";
+        ctx.fillText('GAME OVER ', canvasWidth / 2 - 120, canvasWidth / 2 - 250);
+        ctx.fillText('SCORE: ' + score.toString(), canvasWidth / 2 - 120, canvasWidth / 2 - 175); 
+
+        ctx.font = "20px 'Aadhunik', Arial";
+        ctx.fillText("~ ~ ~ Hit the R key to Restart. ~ ~ ~", canvasWidth / 2 - 160, canvasWidth / 2 - 110);  
     }
 
     DrawLives();
@@ -354,7 +387,7 @@ function Render(){
         for(let k=0; k<asteroids.length; k++){
             if(!gameover && CircleCollision(ship.x, ship.y, ship.radius - 4,
             asteroids[k].x, asteroids[k].y, asteroids[k].collisionRadius)){
-                
+
                 ship.x = canvasWidth / 2;
                 ship.y = canvasHeight / 2;
                 ship.velX = 0;
