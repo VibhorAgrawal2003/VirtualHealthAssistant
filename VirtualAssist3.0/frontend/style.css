@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 450px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.4);
+    background-color: #ffffff;
+}
+
+.header {
+    background-color: #037fff;
+    padding: 15px;
+}
+
+.header h1 {
+    color: #ffffff;
+    font-size: 24px;
+    text-align: center;
+}
+
+.body {
+    flex: 1;
+    background-color: #f8f8f8;
+    padding: 20px 30px;
+    overflow-y: auto;
+}
+
+.message {
+    background-color: #fd7094;
+    padding: 10px;
+    color: white;
+    max-width: 70%;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.user-message {
+    background-color: #fd7094;
+    opacity: 75%;
+    color: black;
+    align-self: flex-end;
+}
+
+.message-content {
+    margin: 0;
+}
+
+.footer form {
+    display: flex;
+    margin-top: 15px;
+}
+
+form input {
+    flex: 1;
+    height: 40px;
+    border: none;
+    outline: none;
+    padding: 0 10px;
+    font-size: 16px;
+}
+
+form button {
+    width: 100px;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #037fff;
+    color: white;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #037fff;
+    transition: background-color 0.2s ease;
+}
