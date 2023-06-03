@@ -10,6 +10,21 @@ let asteroids = [];
 let score = 0;
 let lives = 3;
 let gameover = false;
+let musicToggle = false;
+
+// Music and Sound Effects B)
+let buttonClickSound = document.createElement("audio");
+let shipBreakdownSound = document.createElement("audio");
+let asteroidzMusic = document.createElement("audio");
+
+buttonClickSound.src = "src/ButtonClick.wav";
+shipBreakdownSound.src = "src/ShipBreakdown.wav";
+asteroidzMusic.src = "src/Asteroidz.mp3";
+
+asteroidzMusic.volume = 0.05;
+buttonClickSound.volume = 0.05;
+shipBreakdownSound.volume = 0.05;
+
 
 document.addEventListener('DOMContentLoaded', SetupCanvas);
 
@@ -39,6 +54,7 @@ function SetupCanvas(){
     });
 
     Start();
+
 }
 
 
@@ -102,11 +118,14 @@ class Ship {
         this.velX *= 0.99;
         this.velY *= 0.99;
 
+
+
         if(ship.movingBackward){
             if(this.gear != 0){
                 this.gear = 0;
                 this.velX = 0;
                 this.velY = 0;
+
             }
             this.x += this.velX;
             this.y += this.velY;
@@ -117,6 +136,7 @@ class Ship {
                 this.gear = 1;
                 this.velX = 0;
                 this.velY = 0;
+
             }    
             this.x -= this.velX;
             this.y -= this.velY;
@@ -334,6 +354,7 @@ function Start(){
     }
 
     if(keys[13]){ // 'ENTER' key
+        buttonClickSound.play();
         Render();
     }
     else{
@@ -377,7 +398,10 @@ function Render(){
         ctx.fillText('SCORE: ' + score.toString(), canvasWidth / 2 - 120, canvasWidth / 2 - 175); 
 
         ctx.font = "20px 'Aadhunik', Arial";
-        ctx.fillText("~ ~ ~ Hit the R key to Restart. ~ ~ ~", canvasWidth / 2 - 160, canvasWidth / 2 - 110);  
+        ctx.fillText("~ ~ ~ Hit the R key to Restart. ~ ~ ~", canvasWidth / 2 - 160, canvasWidth / 2 - 110);
+        
+        gameover = true;  
+        musicToggle = false;
     }
 
     DrawLives();
@@ -387,6 +411,9 @@ function Render(){
         for(let k=0; k<asteroids.length; k++){
             if(!gameover && CircleCollision(ship.x, ship.y, ship.radius - 4,
             asteroids[k].x, asteroids[k].y, asteroids[k].collisionRadius)){
+                
+                shipBreakdownSound.currentTime = 0;
+                shipBreakdownSound.play();
 
                 ship.x = canvasWidth / 2;
                 ship.y = canvasHeight / 2;
@@ -491,5 +518,12 @@ function Render(){
             asteroids[j].Draw(j);
         }
     }
+
+    if(!musicToggle && !gameover){
+        asteroidzMusic.play();
+        asteroidzMusic.loop = true;
+        musicToggle = true;
+    }
+
     requestAnimationFrame(Render);
 }
