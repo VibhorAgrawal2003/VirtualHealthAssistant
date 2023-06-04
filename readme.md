@@ -2,7 +2,7 @@
 
 DocBot is a mobile and web application designed to provide quick answers to health queries. It offers a range of features to enhance the user experience and ensure easy access to relevant information.
 
-## Features
+## Planned Features
 
 - Multiple Chat Assistants: Chat with dedicated assistants for various health topics, including Physical Health, Mental Health, First-Aid and Emergency, Fitness and Exercise, and more.
 - Alerts and Reminders: Set reminders for daily medication and doctor appointments to stay on track with your healthcare routine.
